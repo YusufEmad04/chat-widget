@@ -54,9 +54,8 @@
 			animation: move-up-down 1s infinite 0.3s;
 		}
 
-		#chat-messages {
-			/* background lgbqt*/
-			background-image: linear-gradient(to right, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #8F00FF);
+		.max-width70 {
+			max-width: 80%;
 		}
 		
 		`;
@@ -300,7 +299,7 @@
 			// const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/manufacturing';
 			// const url = 'https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/';
 			// localhost on port 5000
-			const url = 'http://localhost:5000/stream';
+			const url = 'http://localhost:8000/stream';
 			// const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/test';
 			const data = { question: message, session_id: userID };
 
@@ -325,30 +324,12 @@
 			// listen to the stream response
 
 			let fullResponse = '';
+			let removedDots = false;
+			const replyElement = document.createElement('div');
+			replyElement.className = 'flex mb-3';
 
 			fetchWithTimeout(url, data)
 				.then((reader) => {
-
-					// remove dots reply from the bot (all of them) (because sometimes there are multiple dots replies)
-					const dotsElements = document.getElementsByClassName('flex justify-start mb-3');
-					for (let i = 0; i < dotsElements.length; i++) {
-						dotsElements[i].remove();
-					}
-
-					// read the stream
-					// create the chat bubble for reply and pass it to the readData function
-					const chatMessages = document.getElementById('chat-messages');
-					const replyElement = document.createElement('div');
-					replyElement.className = 'flex mb-3';
-
-					const formattedMessage = message.replace(/\n/g, "<br>");
-
-					replyElement.innerHTML = `
-						<div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]">
-							${formattedMessage}
-						</div>
-					`;
-					chatMessages.appendChild(replyElement);
 					return readData();
 					function readData() {
 						return reader.read().then(({ done, value }) => {
@@ -362,9 +343,25 @@
 							fullResponse += value;
 							console.log(fullResponse);
 
+							if (!removedDots) {
+								// remove dots reply from the bot (all of them) (because sometimes there are multiple dots replies)
+								const dotsElements = document.getElementsByClassName('flex justify-start mb-3');
+								for (let i = 0; i < dotsElements.length; i++) {
+									dotsElements[i].remove();
+								}
+
+								// read the stream
+								// create the chat bubble for reply and pass it to the readData function
+								const chatMessages = document.getElementById('chat-messages');
+								chatMessages.appendChild(replyElement);
+								removedDots = true;
+							}
+
+							const fullResponseFormatted = fullResponse.replace(/\n/g, "<br>");
+
 							replyElement.innerHTML = `
-								<div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]">
-									${fullResponse}
+								<div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-width70">
+									${fullResponseFormatted}
 								</div>
 							`;
 
@@ -390,7 +387,7 @@
 			const formattedMessage = message.replace(/\n/g, "<br>");
 
 			messageElement.innerHTML = `
-				<div class="bg-gray-800 text-white rounded-lg py-2 px-4 max-w-[70%]">
+				<div class="bg-gray-800 text-white rounded-lg py-2 px-4 max-width70">
 					${formattedMessage}
 				</div>
 			`;
@@ -434,7 +431,7 @@
 			const formattedMessage = message.replace(/\n/g, "<br>");
 
 			replyElement.innerHTML = `
-				<div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]">
+				<div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-width70">
 					${formattedMessage}
 				</div>
 			`;
@@ -456,7 +453,7 @@
 					// Adjust this part based on your existing UI code structure
 					messageElement.className = msg.type === 'user' ? 'flex justify-end mb-3' : 'flex mb-3';
 					messageElement.innerHTML = `
-						<div class="${msg.type === 'user' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'} rounded-lg py-2 px-4 max-w-[70%]">
+						<div class="${msg.type === 'user' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'} rounded-lg py-2 px-4 max-width70">
 							${msg.text}
 						</div>
 					`;
