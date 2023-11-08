@@ -299,8 +299,9 @@
 			// const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/manufacturing';
 			// const url = 'https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/';
 			// localhost on port 5000
-			const url = 'http://localhost:8000/stream';
+			// const url = 'http://localhost:8000/stream';
 			// const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/test';
+			const url = 'https://4juu4naa5hf4toxfq4dxe54iky0vccaw.lambda-url.us-west-1.on.aws/stream';
 			const data = { question: message, session_id: userID };
 
 			// fetchWithTimeout(url, data
@@ -364,6 +365,7 @@
 									${fullResponseFormatted}
 								</div>
 							`;
+							chatMessages.scrollTop = chatMessages.scrollHeight;
 
 							return readData();
 						});
