@@ -156,6 +156,7 @@
 		clearChat.addEventListener('click', function() {
 			messages = [];
 			localStorage.setItem('userID', generateUUID());
+			userID = localStorage.getItem('userID');
 			localStorage.setItem('chatMessages', JSON.stringify([]));
 			chatMessages.innerHTML = '';
 		});
